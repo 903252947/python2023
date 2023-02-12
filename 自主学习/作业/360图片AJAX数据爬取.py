@@ -94,27 +94,24 @@ class Imgspider():
             self.json_queue.task_done()
 
     def save_data(self,item):
-       # while True:
-       #      lock.acquier()
+       while True:
+
             self.content_list_queue.get()
             for node in item:
                print(node)
 
-            # sql='insert into bizhi(id, title, imgurl) values(%s, %s, %s)'
-            # try:
-            #     self.cursor.execute(sql,(0, item['title'],item['img_url']))
-            #     self.conn.commit()
-            #     print('插入数据成功')
-            # except Exception as e:
-            #
-            #     print("插入数据失败:{}".format(e))
-            #     self.conn.rollback()
+            sql='insert into bizhi(id, title, imgurl) values(%s, %s, %s)'
+            try:
+                self.cursor.execute(sql,(0, item['title'],item['img_url']))
+                self.conn.commit()
+                print('插入数据成功')
+            except Exception as e:
+
+                print("插入数据失败:{}".format(e))
+                self.conn.rollback()
             self.content_list_queue.task_done()
     def main(self):
-           lock=threading.Lock()
 
-           # response= self.get_data()
-           # self.parse_data(response)
            # 存放线程
            thread_list = []
            #创建发送请求的线程  耗时任务
@@ -125,9 +122,9 @@ class Imgspider():
            t_content=threading.Thread(target=self.parse_data)
            thread_list.append(t_content)
            # #创建保存数据的线程
-           # t_save=threading.Thread(target=self.save_data)
-           # thread_list.append(t_save)
-           #启动 线程
+           t_save=threading.Thread(target=self.save_data)
+           thread_list.append(t_save)
+           # 启动 线程
            for t in  thread_list:
                #守护主线程
                t.daemon=True
@@ -143,7 +140,7 @@ class Imgspider():
 
 if __name__ == '__main__':
 
-    # t1=time.time()
+    t1=time.time()
     img=Imgspider()
     img.main()
-    # print('总耗时:',time.time()-t1)
+    print('总耗时:',time.time()-t1)
