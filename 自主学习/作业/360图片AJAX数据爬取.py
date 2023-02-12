@@ -133,8 +133,7 @@ class Imgspider():
            index_threading=threading.currentThread()
             #当 队列任务为0是,主线程接受
            for i in [self.json_queue,self.content_list_queue]:
-              if i is index_threading:
-                  continue
+
               i.join() # 阻塞  等待技术为0
 
 
